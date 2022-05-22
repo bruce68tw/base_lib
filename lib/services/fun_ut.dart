@@ -6,6 +6,11 @@ class FunUt {
   /// appBar pager button gap
   //static const pageBtnGap = EdgeInsets.all(15); 
   ///constant
+  static const systemError = "System Error, Please Contact Administrator.";
+  static const double fontSize = 16;
+  
+  static const notEmpty = '不可空白。';
+
   ///indicate error
   static const preError = 'E:';
 
@@ -22,18 +27,19 @@ class FunUt {
 
   /// app dir
   static String dirApp = '';
+  static String dirTemp = '';
 
   /// initial
-  static Future init(bool isHttps, String apiServer, [bool testMode=false]) async {
+  static Future init(bool isHttps, String apiServer) async {
     if (!StrUt.isEmpty(FunUt.apiServer)) return;
 
     FunUt.isHttps = isHttps;
     FunUt.apiServer = apiServer;
 
-    if (!testMode){
-      var dir = await getApplicationDocumentsDirectory();
-      dirApp = dir.path + '/';
-    }
+    var dir = await getApplicationDocumentsDirectory();
+    dirApp = dir.path + '/';
+    dirTemp = dirApp + '_temp/';
+
   }
 
 } //class

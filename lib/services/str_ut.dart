@@ -1,6 +1,11 @@
-import 'dart:developer';
-import 'dart:convert';
-import 'package:encrypt/encrypt.dart';
+//import 'dart:developer';
+import 'dart:convert';  //for utf8
+import 'dart:io';
+import 'package:uuid/uuid.dart';
+import 'package:encrypt/encrypt.dart';  //for AES
+import 'package:crypto/crypto.dart';    //for sha1
+import 'package:convert/convert.dart';  //for hex
+import 'log_ut.dart';  
 
 //static class
 class StrUt {
@@ -70,9 +75,36 @@ class StrUt {
     try {
       return jsonDecode(data);
     } on Exception catch (e) {
-      if (showLog) log('Error: $e');
+      if (showLog) LogUt.error('Error: $e');
       return null;
     }
   }
   
+  static int findArray(List<String> list, String value) {
+    return list.indexOf(value);
+  }
+  
+  static String uuid() {
+    return const Uuid().v4();
+  }
+  
+  static String getLeft(String source, String find)
+  {
+      var pos = source.indexOf(find);
+      return (pos < 0) ? source : source.substring(0, pos);
+  }
+
+  /// new row.id 10 char
+  static String newId() {
+      //1.stop 1 milli second for avoid repeat(sync way here !!)
+      sleep(const Duration(milliseconds: 1));
+
+      var num = DateTime.now().millisecondsSinceEpoch * 3;
+      var bytes = utf8.encode(num.toString());
+      var hexStr = sha1.convert(bytes).toString();
+      return base64.encode(hex.decode(hexStr))
+        .replaceAll('+', '').replaceAll('/', '')
+        .substring(0, 10);
+  }
+
 }//class

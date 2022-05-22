@@ -18,7 +18,14 @@ dependencies:
   #image_downloader: ^0.30.0
   archive: ^3.1.5
   path: ^1.8.0
-
+  camera: ^0.9.4+20
+  uuid: ^3.0.6
+  sqflite: ^2.0.2
+  geolocator: ^8.0.0
+  image: ^3.1.3
+  dio: ^4.0.6
+  crypto: ^3.0.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

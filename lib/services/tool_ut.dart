@@ -1,23 +1,29 @@
-import 'dart:developer';
+//import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'log_ut.dart';
 
 //static class, cannot use _Fun
 class ToolUt {
   //show msg box
-  static void msg(BuildContext? context, String info) {
+  static void msg(BuildContext? context, String info, [Function? onOk]) {
     if (context == null){
-      log(info);
+      LogUt.error(info);
       return;
     }
 
     // set up the button
     var okBtn = TextButton(
       child: const Text('OK'),
-      onPressed: () => Navigator.pop(context),
-    );
+      onPressed: (){
+        if (onOk == null){
+          Navigator.pop(context);
+        } else {
+          onOk();
+        } 
+    });
 
     // set up the AlertDialog
-    var alert = AlertDialog(
+    var dialog = AlertDialog(
       //title: Text('My title'),
       content: Text(info),
       actions: [
@@ -29,7 +35,7 @@ class ToolUt {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return dialog;
       },
     );
   }
@@ -102,16 +108,36 @@ class ToolUt {
   //close a popup dialog
   static void closePopup(BuildContext? context) {
     if (context == null) return;
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   //open a main form
-  static void openForm(BuildContext? context, Widget form) {
+  static void openForm(BuildContext? context, Widget form, [bool replace = false]) {
     if (context == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => form),
-    );
+    if (replace){
+      Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => form),
+      );
+    } else {
+      Navigator.push(context,
+        MaterialPageRoute(builder: (context) => form),
+      );
+    }
   }
+  
+  /*
+  static void openModal(BuildContext context, Widget form, [bool replace = false]) {
+    if (context == null) return;
+    if (replace){
+      Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => form),
+      );
+    } else {
+      Navigator.push(context,
+        MaterialPageRoute(builder: (context) => form),
+      );
+    }
+  }
+  */
   
 } //class

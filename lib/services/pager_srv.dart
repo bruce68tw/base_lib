@@ -1,5 +1,5 @@
-import 'package:base_lib/models/pager_dto.dart';
 import 'package:flutter/material.dart';
+import '../models/all.dart';
 
 //pager service
 class PagerSrv {
@@ -97,13 +97,13 @@ class PagerSrv {
   ///get dataTable json object(Map) for find rows at backend
   ///@findJson find json string
   ///@return dataTable json
-  Map<String, dynamic> getDtJson([String findJson = '']) {
-    return {
-      'start': (_nowPage - 1) * _pageRows,
-      'length': _pageRows,
-      'recordsFiltered': _rowCount,
-      'findJson': findJson,
-    };
+  DtDto getDtJson([String findJson = '']) {
+    return DtDto(
+      start: (_nowPage - 1) * _pageRows,
+      length: _pageRows,
+      recordsFiltered: _rowCount,
+      findJson: findJson,
+    );
   }
 
   Widget getWidget(PagerDto pagerDto) {

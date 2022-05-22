@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:archive/archive_io.dart';
+
 import 'fun_ut.dart';
 import 'str_ut.dart';
 
@@ -53,6 +55,52 @@ class FileUt {
     return (pos < 0)
       ? ''
       : fileName.substring(pos + 1);    
+  }
+
+  /// delete files in directory
+  static deleteDirFiles(String fromDir) {
+    var dir = Directory(fromDir);
+    if(!dir.existsSync()) return;
+
+    var files = dir.listSync();
+    for(var file in files){
+      file.deleteSync();
+    }
+  }
+
+  static renameDir(String fromDir, String toDir) {
+    var dirFrom = Directory(fromDir);
+    dirFrom.rename(toDir);
+  }
+
+  /// zip files of folder (into temp folder)
+  /// return empty if no files
+  static String zipDir(String fromDir) {
+    var files = Directory(fromDir).listSync();
+    if (files.isEmpty){
+      return '';
+    }
+    
+    var toPath = FunUt.dirTemp + getDirName(fromDir) + '.zip';
+    var encoder = ZipFileEncoder();
+    encoder.create(toPath);
+
+    for(var file in files){
+      encoder.addFile(File(file.path));
+    }
+    encoder.close();
+    return toPath;
+  }
+
+  static String getDirName(String dir) {
+    var len = dir.length;
+    if (dir.substring(len - 1) == '/'){
+      dir = dir.substring(0, len -1);
+    }
+    var pos = dir.lastIndexOf('/');
+    return (pos < 0)
+      ? dir
+      : dir.substring(pos + 1);
   }
 
 } //class

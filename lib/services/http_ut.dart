@@ -52,7 +52,8 @@ class HttpUt {
   }
 
   ///download and unzip
-  static Future saveUnzipAsync(BuildContext context, String action, 
+  ///return file index(base 1) if not batch
+  static Future<int> saveUnzipAsync(BuildContext context, String action, 
       Map<String, dynamic> json, String dirSave) async {
 
     //create folder if need
@@ -63,17 +64,23 @@ class HttpUt {
 
     //if no file, download it
     //var action = isBatch ? 'GetBatchImage' : 'GetStepImage';
-    var bytes = await _getFileBytesAsync(context, action, json);
-    if (bytes != null) {
-      var files = ZipDecoder().decodeBytes(bytes);
-      var dirBase = dir.path + '/';
-      for (var file in files) {
-        //..cascade operator
-        File(dirBase + file.name)
-          ..createSync()
-          ..writeAsBytesSync(file.content as List<int>, flush:true);
-      }        
+    var bytes = await _getFileBytesAsync(context, action, json);    
+    if (bytes == null) return 0;
+
+    var fileName = '';
+    var files = ZipDecoder().decodeBytes(bytes);
+    var dirBase = dir.path + '/';
+    for (var file in files) {
+      //..cascade operator
+      fileName = file.name;
+      File(dirBase + file.name)
+        ..createSync()
+        ..writeAsBytesSync(file.content as List<int>, flush:true);
     }
+
+    //get file sort
+    var cols = fileName.split('_');
+    return (cols.length < 3) ? 0 : int.parse(cols[0]);
   }
 
   static Future<Uint8List?> _getFileBytesAsync(BuildContext? context, 
@@ -152,19 +159,27 @@ class HttpUt {
 
     //show error msg if any
     var str = utf8.decode(resp.bodyBytes);
-    var json2 = StrUt.toJson(str, showLog:false);
-    var error = (json2 == null)
-      ? _strToMsg(str)
-      : _resultToMsg(json2);
-    if (error != ''){
-      ToolUt.msg(context, error);
-      return;
+    if (jsonOut){
+      var json2 = StrUt.toJson(str, showLog:false); //return null when failed.
+      var error = (json2 == null)
+        ? _strToMsg(str)        //remove pre error 
+        : _resultToMsg(json2);  //get result error msg
+      if (error != ''){
+        ToolUt.msg(context, error);
+        return;
+      }
+
+      if (fnOk != null) fnOk(json2);
+    } else {
+      if (fnOk != null) fnOk(str);
     }
 
+    /*
     //callback
     if (fnOk != null){
       fnOk(jsonOut ? json2 : str);
     }
+    */
   }
 
   ///result to error msg

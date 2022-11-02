@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //static class
-class WidgetUt {
+class WG {
 
   static Text text(double size, String label, [Color? color, double? height]) {
     return Text(label, style: TextStyle(

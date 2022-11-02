@@ -7,5 +7,5 @@ export 'services/json_ut.dart';
 export 'services/pager_srv.dart';
 export 'services/str_ut.dart';
 export 'services/tool_ut.dart';
-export 'services/widget_ut.dart';
+export 'services/widget.dart';
 export 'models/pager_dto.dart';
